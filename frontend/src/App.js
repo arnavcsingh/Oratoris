@@ -30,7 +30,7 @@ function App() {
     <div className="App">
       <h1>Oratoris</h1>
       <form>
-        <input onChange = {check} ref = {ref} type = "file"/>
+        <input name = "file" onChange = {check} ref = {ref} type = "file"/>
         <button onClick = {uploading}>Upload</button>
       </form>
       <div className = "display">

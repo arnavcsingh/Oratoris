@@ -20,18 +20,31 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage });
 app.post('/upload', upload.single('file'), async (req, reactRes) => {
-    const f = new FormData();
-    f.append('file', fs.createReadStream(req.file.path), req.file.originalname)
-    const flaskRes = await fetch('http://127.0.0.1:5000/transcribe', {
-        method: "POST",
-        body: f,
-        headers: f.getHeaders()
-    });
-    if(flaskRes.ok){
-        const data = await flaskRes.json();
-        reactRes.json({data})
-    } else {
-        reactRes.json(null)
+    try {
+        console.log("req.body:", req.body);
+        console.log("req.file:", req.file);
+        const f = new FormData();
+        f.append('file', fs.createReadStream(req.file.path), req.file.originalname)
+        console.log("Sending to Flask:", {
+            filePath: req.file.path,
+            originalname: req.file.originalname,
+            headers: f.getHeaders()
+        });
+
+        const flaskRes = await fetch('http://127.0.0.1:5000/transcribe', {
+            method: "POST",
+            body: f,
+            headers: f.getHeaders()
+        });
+        if(flaskRes.ok){
+            const data = await flaskRes.json();
+            reactRes.json({data})
+        } else {
+            reactRes.status(flaskRes.status).json({ error: "Flask server error" });
+        }
+    } catch (error){
+        console.error(error);
+        reactRes.status(500).json({ error: "Internal Server Error" });
     }
 })
 app.listen(port, () => {

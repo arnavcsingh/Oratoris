@@ -2,12 +2,13 @@ from flask import Flask, request, jsonify
 import whisper
 
 app = Flask(__name__)
-model = whisper.load_model("base")  # You can change to "turbo" if you want
+model = whisper.load_model("base")
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
+    print(request.files)
     audio_file = request.files["file"]
-    audio_file.save("temp_audio.wav")  # Temporarily save uploaded file
+    audio_file.save("temp_audio.wav")
     result = model.transcribe("temp_audio.wav")
     return jsonify({"text": result["text"]})
 
