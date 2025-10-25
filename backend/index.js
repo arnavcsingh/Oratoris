@@ -3,6 +3,7 @@ import multer from "multer";
 import cors from 'cors';
 import fs from 'fs';
 import FormData from 'form-data';
+import axios from 'axios';
 const port = 5100;
 const app = express();
 app.use(express.json());
@@ -30,14 +31,17 @@ app.post('/upload', upload.single('file'), async (req, reactRes) => {
             originalname: req.file.originalname,
             headers: f.getHeaders()
         });
-
-        const flaskRes = await fetch('http://127.0.0.1:5000/transcribe', {
-            method: "POST",
-            body: f,
+        console.log("FormData keys:", Object.keys(f));
+        const flaskRes = await axios.post('http://127.0.0.1:5000/transcribe', f, {
+            headers: f.getHeaders()
         });
-        if(flaskRes.ok){
-            const data = await flaskRes.json();
-            reactRes.json({data})
+        //const flaskRes = await fetch('http://127.0.0.1:5000/transcribe', {
+        //    method: "POST",
+        //    body: f,
+        //    headers: f.getHeaders()
+        //});
+        if(flaskRes.status === 200){
+            reactRes.json({data : flaskRes.data})
         } else {
             reactRes.status(flaskRes.status).json({ error: "Flask server error" });
         }

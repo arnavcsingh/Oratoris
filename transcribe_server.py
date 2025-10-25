@@ -6,7 +6,9 @@ model = whisper.load_model("base")
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
+    print(request)
     print(request.files)
+    print(request.form)
     audio_file = request.files["file"]
     audio_file.save("temp_audio.wav")
     result = model.transcribe("temp_audio.wav")
