@@ -35,15 +35,19 @@ function App() {
       </form>
       <div className = "display">
         <p className = "transcription">
-          Transcription appears here.
+          Transcription appears here:
           <br></br>
-          {data?.data?.text}
+          {data?.text}
         </p>
         <p className = "filler">
-          Filler words appear here.
+          Filler words appear here:
+          <br></br>
+          {data && Object.entries(data.fillers).map(([word, count]) => (
+            <div key={word}>{word}: {count}</div>
+          ))}
         </p>
         <p>
-          Speed at which they talk appears here.
+          Speed at which they talk appears here:
         </p>
       </div>
     </div>

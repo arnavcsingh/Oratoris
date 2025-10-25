@@ -42,7 +42,7 @@ app.post('/upload', upload.single('file'), async (req, reactRes) => {
         //    headers: f.getHeaders()
         //});
         if(flaskRes.status === 200){
-            reactRes.json({data : flaskRes.data})
+            reactRes.json(flaskRes.data)
         } else {
             reactRes.status(flaskRes.status).json({ error: "Flask server error" });
         }

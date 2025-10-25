@@ -1,18 +1,34 @@
 from flask import Flask, request, jsonify
 import whisper
+import re
+import json
 
 app = Flask(__name__)
 model = whisper.load_model("base")
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
-    print(request)
-    print(request.files)
-    print(request.form)
     audio_file = request.files["file"]
     audio_file.save("temp_audio.wav")
     result = model.transcribe("temp_audio.wav")
-    return jsonify({"text": result["text"]})
+    fillers = {
+        "um": 0,
+        "uh": 0,
+        "oh": 0,
+        "er": 0,
+        "ah": 0,
+        "you know": 0,
+        "like": 0,
+        "basically": 0
+    }
+    transcription = result["text"].lower()
+    for filler in fillers:
+        pattern = r'\b' + re.escape(filler) + r'\b'
+        fillers[filler] = len(re.findall(pattern, transcription))
+    return jsonify({
+        "text": result["text"],
+        "fillers": fillers
+        })
 
 if __name__ == "__main__":
     app.run(port=5000)
