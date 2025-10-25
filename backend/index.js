@@ -35,6 +35,7 @@ app.post('/upload', upload.single('file'), async (req, reactRes) => {
         const flaskRes = await axios.post('http://127.0.0.1:5000/transcribe', f, {
             headers: f.getHeaders()
         });
+        console.log(flaskRes.data)
         //const flaskRes = await fetch('http://127.0.0.1:5000/transcribe', {
         //    method: "POST",
         //    body: f,

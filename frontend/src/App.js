@@ -36,7 +36,8 @@ function App() {
       <div className = "display">
         <p className = "transcription">
           Transcription appears here.
-          {data?.text}
+          <br></br>
+          {data?.data?.text}
         </p>
         <p className = "filler">
           Filler words appear here.
