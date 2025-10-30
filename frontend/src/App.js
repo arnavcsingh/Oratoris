@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
-import './App.css';
+import React, { useRef, useState } from "react";
+import "./App.css";
 import WpmChart from "./WPMchart.js";
 
 function App() {
   const ref = useRef(null);
   const [file, setFile] = useState(null);
   const [data, setData] = useState(null);
+
   const check = (event) => {
-    if (event.target.files[0].type.startsWith("audio/")) {
+    if (event.target.files[0]?.type.startsWith("audio/")) {
       setFile(event.target.files[0]);
     } else {
       alert("Please select an audio file.");
@@ -18,15 +19,15 @@ function App() {
 
   const uploading = async (event) => {
     event.preventDefault();
+    if (!file) return alert("No file selected!");
     const form = new FormData();
-    form.append('file', file);
-    const info = await fetch('http://localhost:5100/upload', {
+    form.append("file", file);
+    const info = await fetch("http://localhost:5100/upload", {
       method: "POST",
-      body: form
+      body: form,
     });
-    const data = await info.json()
-    console.log("Chart data:", data.wpmTimeline);
-    setData(data);
+    const result = await info.json();
+    setData(result);
   };
 
   const [recording, setRecording] = useState(false);
@@ -39,9 +40,7 @@ function App() {
     const mediaRecorder = new MediaRecorder(stream);
     chunksRef.current = [];
     mediaRecorderRef.current = mediaRecorder;
-    mediaRecorder.ondataavailable = (event) => {
-      chunksRef.current.push(event.data);
-    };
+    mediaRecorder.ondataavailable = (event) => chunksRef.current.push(event.data);
     mediaRecorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "audio/webm" });
       const url = URL.createObjectURL(blob);
@@ -57,77 +56,97 @@ function App() {
     setRecording(false);
   };
 
+  // Random floating shapes for the background
+  const shapes = Array.from({ length: 8 }).map((_, i) => (
+    <div
+      key={i}
+      className="floating-shape"
+      style={{
+        width: `${30 + Math.random() * 50}px`,
+        height: `${30 + Math.random() * 50}px`,
+        background: `rgba(${50 + Math.random()*200}, ${50 + Math.random()*200}, 255, 0.2)`,
+        top: `${Math.random() * 100}vh`,
+        left: `${Math.random() * 100}vw`,
+        animationDuration: `${10 + Math.random() * 10}s`,
+      }}
+    />
+  ));
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-100 to-white flex flex-col items-center p-6">
-    <h1 className="text-5xl font-extrabold text-indigo-700 mb-8 drop-shadow-lg">
-      Oratoris
-    </h1>
+    <div className="relative min-h-screen flex flex-col items-center p-6 bg-gradient-to-b from-[#1b1b2e] to-[#2c2c3e] overflow-hidden">
+      {shapes}
 
-    <form className="flex flex-col md:flex-row gap-4 mb-8 w-full max-w-lg">
-      <input
-        name="file"
-        onChange={check}
-        ref={ref}
-        type="file"
-        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 shadow-sm transition"
-      />
-      <button
-        onClick={uploading}
-        className="bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-indigo-700 hover:scale-105 transition transform duration-300"
-      >
-        Upload
-      </button>
-    </form>
+      <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-indigo-500 mb-10 z-10 relative">
+        Oratoris
+      </h1>
 
-    <div className="recorder flex flex-col items-center mb-8 space-y-4">
-      {!recording ? (
+      <form className="flex flex-col md:flex-row gap-4 mb-10 w-full max-w-lg z-10 relative">
+        <input
+          name="file"
+          onChange={check}
+          ref={ref}
+          type="file"
+          className="border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 shadow-sm bg-[#2a2a40] text-[#f0f0f5]"
+        />
         <button
-          onClick={startRecording}
-          className="bg-teal-400 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-teal-500 hover:-translate-y-1 hover:scale-105 transition transform duration-300"
+          onClick={uploading}
+          className="bg-gradient-to-r from-indigo-600 to-teal-400 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
         >
-          Start Recording
+          Upload
         </button>
-      ) : (
-        <button
-          onClick={stopRecording}
-          className="bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-red-600 hover:-translate-y-1 hover:scale-105 transition transform duration-300"
-        >
-          Stop Recording
-        </button>
-      )}
-      {audioURL && <audio controls src={audioURL} className="mt-2 shadow rounded" />}
-    </div>
+      </form>
 
-    <div className="display w-full max-w-3xl space-y-6">
-      {/** Cards with 3D hover effect **/}
-      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
-        <h2 className="text-2xl font-semibold text-indigo-600 mb-2">Transcription</h2>
-        <p>{data?.text || "Transcription appears here."}</p>
-      </div>
-
-      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
-        <h2 className="text-2xl font-semibold text-teal-500 mb-2">Filler Words</h2>
-        {data?.fillers ? (
-          Object.entries(data.fillers).map(([word, count]) => (
-            <div key={word}>
-              {word}: {count}
-            </div>
-          ))
+      <div className="recorder flex flex-col items-center mb-10 space-y-4 z-10 relative">
+        {!recording ? (
+          <button
+            onClick={startRecording}
+            className="bg-gradient-to-r from-teal-400 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
+          >
+            Start Recording
+          </button>
         ) : (
-          <p>No filler words yet.</p>
+          <button
+            onClick={stopRecording}
+            className="bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
+          >
+            Stop Recording
+          </button>
         )}
+        {audioURL && <audio controls src={audioURL} className="mt-2 shadow rounded z-10 relative" />}
       </div>
 
-      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
-        <h2 className="text-2xl font-semibold text-indigo-600 mb-2">WPM Timeline</h2>
-        {data?.wpmTimeline && data.wpmTimeline.length > 0 ? (
-          <WpmChart data={data.wpmTimeline} />
-        ) : (
-          <p>No WPM data available yet.</p>
-        )}
+      <div className="display w-full max-w-3xl space-y-6 z-10 relative">
+        {/* Transcription Card */}
+        <div className="card card-teal shadow-xl">
+          <h2 className="text-2xl font-semibold text-teal-300 mb-2">Transcription</h2>
+          <p>{data?.text || "Transcription appears here."}</p>
+        </div>
+
+        {/* Filler Words Card */}
+        <div className="card card-indigo shadow-xl">
+          <h2 className="text-2xl font-semibold text-indigo-300 mb-2">Filler Words</h2>
+          {data?.fillers ? (
+            Object.entries(data.fillers).map(([word, count]) => (
+              <div key={word}>
+                {word}: {count}
+              </div>
+            ))
+          ) : (
+            <p>No filler words yet.</p>
+          )}
+        </div>
+
+        {/* WPM Timeline Card */}
+        <div className="card card-violet shadow-xl">
+          <h2 className="text-2xl font-semibold text-violet-300 mb-2">WPM Timeline</h2>
+          {data?.wpmTimeline && data.wpmTimeline.length > 0 ? (
+            <WpmChart data={data.wpmTimeline} />
+          ) : (
+            <p>No WPM data available yet.</p>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

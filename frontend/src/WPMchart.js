@@ -15,7 +15,7 @@ const WpmChart = ({ data }) => {
 
   return (
     <div className="w-full h-64 p-4 bg-white rounded-2xl shadow">
-      <h2 className="text-lg font-semibold mb-2 text-center">
+      <h2 className="text-lg font-semibold mb-2 text-center text-gray-900">
         Speaking Speed Over Time (WPM)
       </h2>
       <div className="w-full h-56"> {/* 👈 Ensures chart has height */}
