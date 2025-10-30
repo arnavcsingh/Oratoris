@@ -25,6 +25,18 @@ def transcribe():
     for filler in fillers:
         pattern = r'\b' + re.escape(filler) + r'\b'
         fillers[filler] = len(re.findall(pattern, transcription))
+    segment_wpm = []
+    for seg in result.get("segments", []):
+        seg_text = seg["text"]
+        num_words = len(re.findall(r'\b\w+\b', seg_text))
+        duration_sec = seg["end"] - seg["start"]
+        wpm = (num_words / duration_sec) * 60 if duration_sec > 0 else 0
+        segment_wpm.append({
+            "start": seg["start"],
+            "end": seg["end"],
+            "wpm": int(wpm)
+        })
+    print(segment_wpm)
     return jsonify({
         "text": result["text"],
         "fillers": fillers
