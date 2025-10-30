@@ -59,72 +59,75 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-100 to-white flex flex-col items-center p-6">
-      <h1 className="text-4xl font-bold text-indigo-700 mb-6">Oratoris</h1>
+    <h1 className="text-5xl font-extrabold text-indigo-700 mb-8 drop-shadow-lg">
+      Oratoris
+    </h1>
 
-      <form className="flex flex-col md:flex-row gap-4 mb-6 w-full max-w-lg">
-        <input
-          name="file"
-          onChange={check}
-          ref={ref}
-          type="file"
-          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
+    <form className="flex flex-col md:flex-row gap-4 mb-8 w-full max-w-lg">
+      <input
+        name="file"
+        onChange={check}
+        ref={ref}
+        type="file"
+        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 shadow-sm transition"
+      />
+      <button
+        onClick={uploading}
+        className="bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-indigo-700 hover:scale-105 transition transform duration-300"
+      >
+        Upload
+      </button>
+    </form>
+
+    <div className="recorder flex flex-col items-center mb-8 space-y-4">
+      {!recording ? (
         <button
-          onClick={uploading}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          onClick={startRecording}
+          className="bg-teal-400 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-teal-500 hover:-translate-y-1 hover:scale-105 transition transform duration-300"
         >
-          Upload
+          Start Recording
         </button>
-      </form>
+      ) : (
+        <button
+          onClick={stopRecording}
+          className="bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-red-600 hover:-translate-y-1 hover:scale-105 transition transform duration-300"
+        >
+          Stop Recording
+        </button>
+      )}
+      {audioURL && <audio controls src={audioURL} className="mt-2 shadow rounded" />}
+    </div>
 
-      <div className="recorder flex flex-col items-center mb-6 space-y-4">
-        {!recording ? (
-          <button
-            onClick={startRecording}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-          >
-            Start Recording
-          </button>
-        ) : (
-          <button
-            onClick={stopRecording}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Stop Recording
-          </button>
-        )}
-        {audioURL && <audio controls src={audioURL} className="mt-2" />}
+    <div className="display w-full max-w-3xl space-y-6">
+      {/** Cards with 3D hover effect **/}
+      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-2">Transcription</h2>
+        <p>{data?.text || "Transcription appears here."}</p>
       </div>
 
-      <div className="display w-full max-w-3xl space-y-6">
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-xl font-semibold mb-2">Transcription</h2>
-          <p>{data?.text || "Transcription appears here."}</p>
-        </div>
+      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
+        <h2 className="text-2xl font-semibold text-teal-500 mb-2">Filler Words</h2>
+        {data?.fillers ? (
+          Object.entries(data.fillers).map(([word, count]) => (
+            <div key={word}>
+              {word}: {count}
+            </div>
+          ))
+        ) : (
+          <p>No filler words yet.</p>
+        )}
+      </div>
 
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-xl font-semibold mb-2">Filler Words</h2>
-          {data?.fillers ? (
-            Object.entries(data.fillers).map(([word, count]) => (
-              <div key={word}>
-                {word}: {count}
-              </div>
-            ))
-          ) : (
-            <p>No filler words yet.</p>
-          )}
-        </div>
-
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-xl font-semibold mb-2">WPM Timeline</h2>
-          {data?.wpmTimeline && data.wpmTimeline.length > 0 ? (
-            <WpmChart data={data.wpmTimeline} />
-          ) : (
-            <p>No WPM data available yet.</p>
-          )}
-        </div>
+      <div className="p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition transform duration-300">
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-2">WPM Timeline</h2>
+        {data?.wpmTimeline && data.wpmTimeline.length > 0 ? (
+          <WpmChart data={data.wpmTimeline} />
+        ) : (
+          <p>No WPM data available yet.</p>
+        )}
       </div>
     </div>
+  </div>
   );
 }
 
