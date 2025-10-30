@@ -30,7 +30,11 @@ const WpmChart = ({ data }) => {
               label={{ value: "WPM", angle: -90, position: "insideLeft" }}
               domain={[0, "auto"]}
             />
-            <Tooltip />
+            <Tooltip
+              contentStyle={{ backgroundColor: "#fff", border: "1px solid #d1d5db" }}
+              labelStyle={{ color: "#1e3a8a", fontWeight: "bold" }}
+              itemStyle={{ color: "#4f46e5" }}
+            />
             <Line
               type="monotone"
               dataKey="wpm"
