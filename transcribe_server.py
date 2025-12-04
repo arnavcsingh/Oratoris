@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import whisper
 import re
+from pydub import AudioSegment
 import json
 
 app = Flask(__name__)
@@ -11,6 +12,8 @@ def transcribe():
     audio_file = request.files["file"]
     audio_file.save("temp_audio.wav")
     result = model.transcribe("temp_audio.wav")
+    audio = AudioSegment.from_file("temp_audio.wav")
+    volume_timeline = compute_volume_timeline(audio)
     transcription = result["text"].lower()
     fillers = {
         "um": 0,
@@ -45,8 +48,28 @@ def transcribe():
         "text": result["text"],
         "fillers": fillers,
         "totalWPM": totalWPM,
-        "wpmTimeline": segment_wpm
+        "wpmTimeline": segment_wpm,
+        "volumeTimeline": volume_timeline
         })
+def dbfs_to_score(dbfs, min_db=-60.0, max_db=-5.0):
+    if dbfs == float("-inf"):
+        return 0
+    norm = (dbfs - min_db) / (max_db - min_db)
+    score = norm * 100
+    if score < 0:
+        score = 0
+    if score > 100:
+        score = 100 
+    return score
+def compute_volume_timeline(audio, window_ms=200):
+    samples = []
+    for i in range(0, len(audio), window_ms):
+        chunk = audio[i:i+window_ms]
+        samples.append(chunk.dBFS)
+    return {
+        "window_ms": window_ms,
+        "samples": samples
+    }
 
 if __name__ == "__main__":
     app.run(port=5000)

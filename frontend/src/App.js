@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import "./App.css";
 import WpmChart from "./WPMchart.js";
-
+import VolumeChart from "./VolumeChart.js";
 function App() {
   const ref = useRef(null);
   const [file, setFile] = useState(null);
@@ -143,6 +143,15 @@ function App() {
             <WpmChart data={data.wpmTimeline} />
           ) : (
             <p>No WPM data available yet.</p>
+          )}
+        </div>
+        {/* Volume Timeline Card */}
+        <div className="card card-violet shadow-xl">
+          <h2 className="text-2xl font-semibold text-violet-300 mb-2">Volume Timeline</h2>
+          {data?.volumeTimeline ? (
+            <VolumeChart data={data.volumeTimeline} />
+          ) : (
+            <p>No volume data available yet.</p>
           )}
         </div>
       </div>
