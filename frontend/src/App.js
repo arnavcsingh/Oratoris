@@ -16,6 +16,18 @@ function App() {
   const [wpmTimeline, setWpmTimeline] = useState([]);
   const [volumeTimeline, setVolumeTimeline] = useState(null);
   const [feedback, setFeedback] = useState([]);
+  const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
+React.useEffect(() => {
+  if (!feedback || feedback.length === 0) return;
+  setCurrentFeedbackIndex(0);
+  const interval = setInterval(() => {
+    setCurrentFeedbackIndex((prev) =>
+      (prev + 1) % feedback.length
+    );
+  }, 3000);
+  return () => clearInterval(interval);
+}, [feedback]);
+
 
 
   const check = (event) => {
@@ -147,7 +159,7 @@ function App() {
         {/* Filler Words Card */}
         <div className="card card-indigo shadow-xl">
           <h2 className="text-2xl font-semibold text-indigo-300 mb-2">Filler Words</h2>
-          {fillers ? (
+          {fillers && Object.keys(fillers).length > 0 ? (
             Object.entries(fillers).map(([word, count]) => (
               <div key={word}>
                 {word}: {count}
@@ -176,18 +188,17 @@ function App() {
             <p>No volume data available yet.</p>
           )}
         </div>
-        {/* Feedback Card */}
-        <div className="card card-emerald shadow-xl">
-          <h2 className="text-2xl font-semibold text-emerald-300 mb-2">Speaking Feedback</h2>
-          {feedback?.length > 0 ? (
-            feedback.map((msg, i) => (
-              <p key={i} className="mb-1">• {msg}</p>
-            ))
-          ) : (
-            <p>No feedback yet.</p>
-          )}
-        </div>
-        <div className="card card-violet shadow-xl" style={{ height: "400px" }}>
+        <div
+          className="card card-violet shadow-xl mx-auto"
+          style={{
+            height: "400px",
+            width: "100%",
+            maxWidth: "800px",
+            overflow: "hidden",
+            padding: "2",
+          }}
+        >
+          <h2 className="text-2xl font-semibold text-emerald-300 mb-2">Coach Feedback</h2>
           <Canvas camera={{ position: [0, 1.2, 2] }}>
             <color attach="background" args={["#1b1b2e"]} />
 
@@ -196,24 +207,42 @@ function App() {
             <directionalLight intensity={0.6} position={[-3, 2, -2]} />
 
             <Suspense fallback={null}>
-              <Astronaut position={[0, -1, 0]} scale={1.8} />
-              {/* --- Speech Bubble Example Using Html --- */}
+              <Astronaut position={[0, 0, 0]} scale={1.8} />
+              {/*Speech Bubble*/}
               <Html
-                position={[0, 1.6, 0]}
+                position={[1.4, 1.3, 0]}
                 center
                 style={{
-                  background: "rgba(255, 255, 255, 0.95)",
-                  padding: "10px 16px",
-                  borderRadius: "12px",
-                  fontSize: "14px",
+                  background: "white",
+                  padding: "6px 10px",
+                  borderRadius: "10px",
+                  fontSize: "12px",
                   color: "#222",
-                  maxWidth: "180px",
-                  textAlign: "center",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                  lineHeight: "1.3",
+                  maxWidth: "120px",
+                  lineHeight: "1.2",
+                  textAlign: "left",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                  position: "relative",
                 }}
               >
-                {feedback[0] || "I'm ready when you are!"}
+                {feedback.length > 0
+                  ? feedback[currentFeedbackIndex]
+                  : "I'm ready when you are!"}
+
+                {/* Bubble Tail */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "-8px",
+                    top: "14px",
+                    width: 0,
+                    height: 0,
+                    borderTop: "6px solid transparent",
+                    borderBottom: "6px solid transparent",
+                    borderRight: "8px solid white",
+                    filter: "drop-shadow(-1px 1px 1px rgba(0,0,0,0.15))",
+                  }}
+                />
               </Html>
             </Suspense>
             <OrbitControls
@@ -221,6 +250,17 @@ function App() {
               target={[0, 1, 0]}
             />
           </Canvas>
+        </div>
+        {/* Feedback Card */}
+        <div className="card card-emerald shadow-xl">
+          <h2 className="text-2xl font-semibold text-emerald-300 mb-2">Compiled Speaking Feedback</h2>
+          {feedback?.length > 0 ? (
+            feedback.map((msg, i) => (
+              <p key={i} className="mb-1">• {msg}</p>
+            ))
+          ) : (
+            <p>No feedback yet.</p>
+          )}
         </div>
       </div>
     </div>
