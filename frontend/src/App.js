@@ -2,6 +2,11 @@ import React, { useRef, useState } from "react";
 import "./App.css";
 import WpmChart from "./WPMchart.js";
 import VolumeChart from "./VolumeChart.js";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import Astronaut from "./astronaut";
+import { Html } from "@react-three/drei";
+import { Suspense } from "react";
 function App() {
   const ref = useRef(null);
   const [file, setFile] = useState(null);
@@ -181,6 +186,41 @@ function App() {
           ) : (
             <p>No feedback yet.</p>
           )}
+        </div>
+        <div className="card card-violet shadow-xl" style={{ height: "400px" }}>
+          <Canvas camera={{ position: [0, 1.2, 2] }}>
+            <color attach="background" args={["#1b1b2e"]} />
+
+            <ambientLight intensity={0.7} />
+            <directionalLight intensity={1.2} position={[3, 3, 3]} />
+            <directionalLight intensity={0.6} position={[-3, 2, -2]} />
+
+            <Suspense fallback={null}>
+              <Astronaut position={[0, -1, 0]} scale={1.8} />
+              {/* --- Speech Bubble Example Using Html --- */}
+              <Html
+                position={[0, 1.6, 0]}
+                center
+                style={{
+                  background: "rgba(255, 255, 255, 0.95)",
+                  padding: "10px 16px",
+                  borderRadius: "12px",
+                  fontSize: "14px",
+                  color: "#222",
+                  maxWidth: "180px",
+                  textAlign: "center",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                  lineHeight: "1.3",
+                }}
+              >
+                {feedback[0] || "I'm ready when you are!"}
+              </Html>
+            </Suspense>
+            <OrbitControls
+              enableZoom={false}
+              target={[0, 1, 0]}
+            />
+          </Canvas>
         </div>
       </div>
     </div>

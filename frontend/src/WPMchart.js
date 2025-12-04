@@ -18,9 +18,14 @@ const WpmChart = ({ data }) => {
       <h2 className="text-lg font-semibold mb-2 text-center text-gray-900">
         Speaking Speed Over Time (WPM)
       </h2>
-      <div className="w-full h-56"> {/* 👈 Ensures chart has height */}
+      <div className="w-full h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{ top: 20, right: 20, left: 20, bottom: 50 }}   // ← add this
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="time"
