@@ -5,7 +5,13 @@ import VolumeChart from "./VolumeChart.js";
 function App() {
   const ref = useRef(null);
   const [file, setFile] = useState(null);
-  const [data, setData] = useState(null);
+  const [transcription, setTranscription] = useState("");
+  const [fillers, setFillers] = useState({});
+  const [totalWPM, setTotalWPM] = useState(0);
+  const [wpmTimeline, setWpmTimeline] = useState([]);
+  const [volumeTimeline, setVolumeTimeline] = useState(null);
+  const [feedback, setFeedback] = useState([]);
+
 
   const check = (event) => {
     if (event.target.files[0]?.type.startsWith("audio/")) {
@@ -27,7 +33,18 @@ function App() {
       body: form,
     });
     const result = await info.json();
-    setData(result);
+    setTranscription(result.text);
+    setFillers(result.fillers);
+    setTotalWPM(result.totalWPM);
+    setWpmTimeline(result.wpmTimeline);
+    setVolumeTimeline(result.volumeTimeline);
+    setFeedback(result.feedback);
+    if (result.volumeTimeline?.samples) {
+      console.log(
+        result.volumeTimeline.samples.some(v => !isFinite(v)),
+        result.volumeTimeline.samples
+      );
+    }
   };
 
   const [recording, setRecording] = useState(false);
@@ -119,14 +136,14 @@ function App() {
         {/* Transcription Card */}
         <div className="card card-teal shadow-xl">
           <h2 className="text-2xl font-semibold text-teal-300 mb-2">Transcription</h2>
-          <p>{data?.text || "Transcription appears here."}</p>
+          <p>{transcription || "Transcription appears here."}</p>
         </div>
 
         {/* Filler Words Card */}
         <div className="card card-indigo shadow-xl">
           <h2 className="text-2xl font-semibold text-indigo-300 mb-2">Filler Words</h2>
-          {data?.fillers ? (
-            Object.entries(data.fillers).map(([word, count]) => (
+          {fillers ? (
+            Object.entries(fillers).map(([word, count]) => (
               <div key={word}>
                 {word}: {count}
               </div>
@@ -139,8 +156,8 @@ function App() {
         {/* WPM Timeline Card */}
         <div className="card card-violet shadow-xl">
           <h2 className="text-2xl font-semibold text-violet-300 mb-2">WPM Timeline</h2>
-          {data?.wpmTimeline && data.wpmTimeline.length > 0 ? (
-            <WpmChart data={data.wpmTimeline} />
+          {wpmTimeline && wpmTimeline.length > 0 ? (
+            <WpmChart data={wpmTimeline} />
           ) : (
             <p>No WPM data available yet.</p>
           )}
@@ -148,10 +165,21 @@ function App() {
         {/* Volume Timeline Card */}
         <div className="card card-violet shadow-xl">
           <h2 className="text-2xl font-semibold text-violet-300 mb-2">Volume Timeline</h2>
-          {data?.volumeTimeline ? (
-            <VolumeChart data={data.volumeTimeline} />
+          {volumeTimeline ? (
+            <VolumeChart data={volumeTimeline} />
           ) : (
             <p>No volume data available yet.</p>
+          )}
+        </div>
+        {/* Feedback Card */}
+        <div className="card card-emerald shadow-xl">
+          <h2 className="text-2xl font-semibold text-emerald-300 mb-2">Speaking Feedback</h2>
+          {feedback?.length > 0 ? (
+            feedback.map((msg, i) => (
+              <p key={i} className="mb-1">• {msg}</p>
+            ))
+          ) : (
+            <p>No feedback yet.</p>
           )}
         </div>
       </div>
