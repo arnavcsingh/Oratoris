@@ -29,8 +29,8 @@ const VolumeChart = ({ data }) => {
   }));
 
   return (
-    <div className="w-full h-64 p-4 bg-white rounded-2xl shadow">
-      <h2 className="text-lg font-semibold mb-2 text-center text-gray-900">
+    <div className="w-full h-64 p-4 rounded-2xl shadow" style={{background: 'rgba(15, 30, 80, 0.6)', backdropFilter: 'blur(15px)'}}>
+      <h2 className="text-lg font-semibold mb-2 text-center text-cyan-300">
         Volume Over Time (dBFS)
       </h2>
 
@@ -40,7 +40,7 @@ const VolumeChart = ({ data }) => {
             data={formatted}
             margin={{ top: 10, right: 16, left: 0, bottom: 28 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 200, 255, 0.2)" />
 
             <XAxis
               dataKey="time"
@@ -50,7 +50,7 @@ const VolumeChart = ({ data }) => {
                 position: "insideBottom",
                 offset: -5,
               }}
-              tick={{ fontSize: 11, fill: "#4b5563" }}
+              tick={{ fontSize: 11, fill: "#a0d8ff" }}
               tickMargin={8}
             />
 
@@ -63,22 +63,26 @@ const VolumeChart = ({ data }) => {
                 angle: -90,
                 position: "insideLeft",
                 offset: 10,
+                fill: "#a0d8ff",
               }}
-              tick={{ fontSize: 11, fill: "#4b5563" }}
+              tick={{ fontSize: 11, fill: "#a0d8ff" }}
             />
 
             <Tooltip
               formatter={(v) => [`${v.toFixed(1)} dB`, "Volume"]}
               labelFormatter={(t) => `${t.toFixed(2)}s`}
+              contentStyle={{background: 'rgba(15, 30, 80, 0.95)', border: '2px solid rgba(138, 43, 226, 0.5)', borderRadius: '8px'}}
+              labelStyle={{color: '#64c8ff'}}
+              itemStyle={{color: '#00ffcc'}}
             />
 
             <Line
               type="monotone"
               dataKey="db"
-              stroke="#4f46e5"
+              stroke="#00ffcc"
               strokeWidth={2.5}
-              dot={{ r: 2 }}
-              activeDot={{ r: 5 }}
+              dot={{ r: 2, fill: '#8acb00' }}
+              activeDot={{ r: 5, fill: '#00ffcc' }}
             />
           </LineChart>
         </ResponsiveContainer>

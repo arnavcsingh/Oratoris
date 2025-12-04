@@ -14,8 +14,8 @@ const WpmChart = ({ data }) => {
   if (!data || data.length === 0) return <p>No data available</p>;
 
   return (
-    <div className="w-full h-64 p-4 bg-white rounded-2xl shadow">
-      <h2 className="text-lg font-semibold mb-2 text-center text-gray-900">
+    <div className="w-full h-64 p-4 rounded-2xl shadow" style={{background: 'rgba(15, 30, 80, 0.6)', backdropFilter: 'blur(15px)'}}>
+      <h2 className="text-lg font-semibold mb-2 text-center text-cyan-300">
         Speaking Speed Over Time (WPM)
       </h2>
       <div className="w-full h-56">
@@ -24,29 +24,31 @@ const WpmChart = ({ data }) => {
             width={500}
             height={300}
             data={data}
-            margin={{ top: 20, right: 20, left: 20, bottom: 50 }}   // ← add this
+            margin={{ top: 20, right: 20, left: 20, bottom: 50 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 200, 255, 0.2)" />
             <XAxis
               dataKey="time"
               label={{ value: "Time (s)", position: "insideBottomRight", offset: -5 }}
+              tick={{ fontSize: 11, fill: "#a0d8ff" }}
             />
             <YAxis
-              label={{ value: "WPM", angle: -90, position: "insideLeft" }}
+              label={{ value: "WPM", angle: -90, position: "insideLeft", fill: "#a0d8ff" }}
               domain={[0, "auto"]}
+              tick={{ fontSize: 11, fill: "#a0d8ff" }}
             />
             <Tooltip
-              contentStyle={{ backgroundColor: "#fff", border: "1px solid #d1d5db" }}
-              labelStyle={{ color: "#1e3a8a", fontWeight: "bold" }}
-              itemStyle={{ color: "#4f46e5" }}
+              contentStyle={{ backgroundColor: "rgba(15, 30, 80, 0.95)", border: "2px solid rgba(138, 43, 226, 0.5)", borderRadius: "8px" }}
+              labelStyle={{ color: "#64c8ff", fontWeight: "bold" }}
+              itemStyle={{ color: "#00ffcc" }}
             />
             <Line
               type="monotone"
               dataKey="wpm"
-              stroke="#4f46e5"
+              stroke="#00ffcc"
               strokeWidth={2.5}
-              dot={{ r: 2 }}
-              activeDot={{ r: 5 }}
+              dot={{ r: 2, fill: '#8acb00' }}
+              activeDot={{ r: 5, fill: '#00ffcc' }}
             />
           </LineChart>
         </ResponsiveContainer>

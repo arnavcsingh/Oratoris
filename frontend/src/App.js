@@ -90,28 +90,42 @@ React.useEffect(() => {
     setRecording(false);
   };
 
-  // Random floating shapes for the background
-  const shapes = Array.from({ length: 8 }).map((_, i) => (
+  // Starfield with twinkling stars
+  const stars = Array.from({ length: 120 }).map((_, i) => (
     <div
       key={i}
-      className="floating-shape"
+      className="star"
       style={{
-        width: `${30 + Math.random() * 50}px`,
-        height: `${30 + Math.random() * 50}px`,
-        background: `rgba(${50 + Math.random()*200}, ${50 + Math.random()*200}, 255, 0.2)`,
-        top: `${Math.random() * 100}vh`,
-        left: `${Math.random() * 100}vw`,
-        animationDuration: `${10 + Math.random() * 10}s`,
+        width: `${Math.random() * 2 + 0.5}px`,
+        height: `${Math.random() * 2 + 0.5}px`,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        '--duration': `${Math.random() * 3 + 2}s`,
+      }}
+    />
+  ));
+
+  // Nebula clouds
+  const nebulas = Array.from({ length: 3 }).map((_, i) => (
+    <div
+      key={i}
+      className={`nebula ${i % 2 === 0 ? 'nebula-purple' : 'nebula-cyan'}`}
+      style={{
+        width: `${200 + Math.random() * 300}px`,
+        height: `${200 + Math.random() * 300}px`,
+        top: `${Math.random() * 80 - 40}%`,
+        left: `${Math.random() * 100 - 50}%`,
       }}
     />
   ));
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center p-6 bg-gradient-to-b from-[#1b1b2e] to-[#2c2c3e] overflow-hidden">
-      {shapes}
+    <div className="relative min-h-screen flex flex-col items-center p-6 overflow-hidden bg-transparent" style={{zIndex: 10}}>
+      {nebulas}
+      {stars}
 
-      <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-indigo-500 mb-10 z-10 relative">
-        Oratoris
+      <h1 className="text-7xl font-extrabold mb-10 z-10 relative" style={{letterSpacing: '0.1em', color: '#00ffff', textShadow: '0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(138, 43, 226, 0.4)'}}>
+        ORATORIS
       </h1>
 
       <form className="flex flex-col md:flex-row gap-4 mb-10 w-full max-w-lg z-10 relative">
@@ -120,11 +134,11 @@ React.useEffect(() => {
           onChange={check}
           ref={ref}
           type="file"
-          className="border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 shadow-sm bg-[#2a2a40] text-[#f0f0f5]"
+          className="border rounded-lg px-4 py-2 flex-1 button-glow"
         />
         <button
           onClick={uploading}
-          className="bg-gradient-to-r from-indigo-600 to-teal-400 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
+          className="bg-cyan-500 text-white px-6 py-2 rounded-lg font-bold button-glow hover:bg-cyan-400"
         >
           Upload
         </button>
@@ -134,58 +148,58 @@ React.useEffect(() => {
         {!recording ? (
           <button
             onClick={startRecording}
-            className="bg-gradient-to-r from-teal-400 to-indigo-500 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
+            className="bg-cyan-500 text-white px-8 py-3 rounded-lg font-bold button-glow hover:bg-cyan-400"
           >
             Start Recording
           </button>
         ) : (
           <button
             onClick={stopRecording}
-            className="bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg button-glow"
+            className="bg-red-500 text-white px-8 py-3 rounded-lg font-bold button-glow hover:bg-red-400"
           >
             Stop Recording
           </button>
         )}
-        {audioURL && <audio controls src={audioURL} className="mt-2 shadow rounded z-10 relative" />}
+        {audioURL && <audio controls src={audioURL} className="mt-2 z-10 relative" style={{filter: 'brightness(1.2)'}} />}
       </div>
 
       <div className="display w-full max-w-3xl space-y-6 z-10 relative">
         {/* Transcription Card */}
         <div className="card card-teal shadow-xl">
-          <h2 className="text-2xl font-semibold text-teal-300 mb-2">Transcription</h2>
-          <p>{transcription || "Transcription appears here."}</p>
+          <h2 className="text-2xl font-semibold text-cyan-300 mb-2">◆ TRANSCRIPTION</h2>
+          <p className="text-blue-50">{transcription || "Awaiting transcription..."}</p>
         </div>
 
         {/* Filler Words Card */}
         <div className="card card-indigo shadow-xl">
-          <h2 className="text-2xl font-semibold text-indigo-300 mb-2">Filler Words</h2>
+          <h2 className="text-2xl font-semibold text-purple-300 mb-2">◆ FILLER WORDS</h2>
           {fillers && Object.keys(fillers).length > 0 ? (
             Object.entries(fillers).map(([word, count]) => (
-              <div key={word}>
-                {word}: {count}
+              <div key={word} className="text-blue-50 my-1">
+                → <span className="text-pink-400">{word}</span>: <span className="text-cyan-300">{count}</span>
               </div>
             ))
           ) : (
-            <p>No filler words yet.</p>
+            <p className="text-blue-50">No filler words detected.</p>
           )}
         </div>
 
         {/* WPM Timeline Card */}
         <div className="card card-violet shadow-xl">
-          <h2 className="text-2xl font-semibold text-violet-300 mb-2">WPM Timeline</h2>
+          <h2 className="text-2xl font-semibold text-purple-300 mb-2">◆ SPEAKING SPEED ANALYSIS</h2>
           {wpmTimeline && wpmTimeline.length > 0 ? (
             <WpmChart data={wpmTimeline} />
           ) : (
-            <p>No WPM data available yet.</p>
+            <p className="text-blue-50">No WPM data available yet.</p>
           )}
         </div>
         {/* Volume Timeline Card */}
         <div className="card card-violet shadow-xl">
-          <h2 className="text-2xl font-semibold text-violet-300 mb-2">Volume Timeline</h2>
+          <h2 className="text-2xl font-semibold text-purple-300 mb-2">◆ VOLUME ANALYSIS</h2>
           {volumeTimeline ? (
             <VolumeChart data={volumeTimeline} />
           ) : (
-            <p>No volume data available yet.</p>
+            <p className="text-blue-50">No volume data available yet.</p>
           )}
         </div>
         <div
