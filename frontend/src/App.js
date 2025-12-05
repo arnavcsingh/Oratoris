@@ -121,7 +121,6 @@ React.useEffect(() => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center p-6 overflow-hidden bg-transparent" style={{zIndex: 10}}>
-      {nebulas}
       {stars}
 
       <h1 className="text-7xl font-extrabold mb-10 z-10 relative" style={{letterSpacing: '0.1em', color: '#00ffff', textShadow: '0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(138, 43, 226, 0.4)'}}>
